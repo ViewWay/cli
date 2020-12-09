@@ -80,6 +80,7 @@ const completion = requireInject('../../lib/completion.js', {
   '../../lib/utils/cmd-list.js': cmdList,
   '../../lib/utils/config.js': config,
   '../../lib/utils/deref-command.js': deref,
+  '../../lib/utils/is-windows-shell.js': false,
   '../../lib/utils/output.js': (line) => {
     output.push(line)
   },
