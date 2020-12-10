@@ -4,6 +4,7 @@ const requireInject = require('require-inject')
 const { join } = require('path')
 const fs = require('fs')
 const ansiTrim = require('../../lib/utils/ansi-trim.js')
+const isWindows = require('../../lib/utils/is-windows.js')
 
 const output = []
 
@@ -141,8 +142,10 @@ test('npm doctor', t => {
   })
 
   doctor([], (err) => {
-    if (err)
-      throw err
+    if (err) {
+      t.fail(output)
+      return t.end()
+    }
 
     t.match(logs, {
       checkPing: { finished: true },
@@ -188,8 +191,10 @@ test('npm doctor supports silent', t => {
   })
 
   doctor([], (err) => {
-    if (err)
-      throw err
+    if (err) {
+      t.fail(err)
+      return t.end()
+    }
 
     t.match(logs, {
       checkPing: { finished: true },
@@ -287,8 +292,10 @@ test('npm doctor skips some tests in windows', t => {
   })
 
   winDoctor([], (err) => {
-    if (err)
-      throw err
+    if (err) {
+      t.fail(output)
+      return t.end()
+    }
 
     t.match(logs, {
       checkPing: { finished: true },
@@ -504,7 +511,7 @@ test('npm doctor outdated nodejs version', t => {
   })
 })
 
-test('npm doctor file permission checks', t => {
+test('npm doctor file permission checks', { skip: isWindows && '*nix specific' }, t => {
   const dir = t.testdir({
     cache: {
       one: 'one',
@@ -718,8 +725,10 @@ test('npm doctor cache verification showed bad content', t => {
 
   doctor([], (err) => {
     // cache verification problems get fixed and so do not throw an error
-    if (err)
-      throw err
+    if (err) {
+      t.fail(output)
+      return t.end()
+    }
 
     t.match(logs, {
       checkPing: { finished: true },
@@ -775,8 +784,10 @@ test('npm doctor cache verification showed reclaimed content', t => {
 
   doctor([], (err) => {
     // cache verification problems get fixed and so do not throw an error
-    if (err)
-      throw err
+    if (err) {
+      t.fail(output)
+      return t.end()
+    }
 
     t.match(logs, {
       checkPing: { finished: true },
@@ -831,8 +842,10 @@ test('npm doctor cache verification showed missing content', t => {
 
   doctor([], (err) => {
     // cache verification problems get fixed and so do not throw an error
-    if (err)
-      throw err
+    if (err) {
+      t.fail(output)
+      return t.end()
+    }
 
     t.match(logs, {
       checkPing: { finished: true },
