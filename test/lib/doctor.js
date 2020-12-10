@@ -4,7 +4,6 @@ const requireInject = require('require-inject')
 const { join } = require('path')
 const fs = require('fs')
 const ansiTrim = require('../../lib/utils/ansi-trim.js')
-const isWindows = require('../../lib/utils/is-windows.js')
 
 const output = []
 
@@ -513,7 +512,7 @@ test('npm doctor outdated nodejs version', t => {
   })
 })
 
-test('npm doctor file permission checks', { skip: isWindows && '*nix specific' }, t => {
+test('npm doctor file permission checks', t => {
   const dir = t.testdir({
     cache: {
       one: 'one',
@@ -580,9 +579,9 @@ test('npm doctor file permission checks', { skip: isWindows && '*nix specific' }
     return cb(err, result)
   }
 
-  fs.chmodSync(join(dir, 'cache', 'unreadable'), fs.constants.S_IWUSR)
-  fs.chmodSync(join(dir, 'localBin', 'four'), fs.constants.S_IRWXU)
-  fs.chmodSync(join(dir, 'globalBin', 'six'), fs.constants.S_IXUSR)
+  fs.chmodSync(join(dir, 'cache', 'unreadable'), 64) // S_IXUSR
+  fs.chmodSync(join(dir, 'localBin', 'four'), 448) // S_IRWXU
+  fs.chmodSync(join(dir, 'globalBin', 'six'), 128) // S_IXUSR
 
   const doctor = requireInject('../../lib/doctor.js', {
     '../../lib/utils/is-windows.js': false,
@@ -597,6 +596,7 @@ test('npm doctor file permission checks', { skip: isWindows && '*nix specific' }
     which,
     fs,
   })
+  // it's necessary to allow tests in node 10.x to not mark 12.x as lted
 
   npm.cache = npm.flatOptions.cache = join(dir, 'cache')
   npm.localDir = join(dir, 'local')
