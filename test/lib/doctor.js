@@ -17,7 +17,8 @@ const ping = async () => {
 const nodeVersions = [
   { version: 'v14.0.0', lts: false },
   { version: 'v13.0.0', lts: false },
-  { version: 'v12.0.0', lts: 'Erbium' },
+  // it's necessary to allow tests in node 10.x to not mark 12.x as lts
+  { version: 'v12.0.0', lts: false },
   { version: 'v10.13.0', lts: 'Dubnium' },
 ]
 
