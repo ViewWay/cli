@@ -4,6 +4,15 @@ const requireInject = require('require-inject')
 const { join } = require('path')
 const fs = require('fs')
 const ansiTrim = require('../../lib/utils/ansi-trim.js')
+const isWindows = require('../../lib/is-windows.js')
+
+// getuid and getgid do not exist in windows, so we shim them
+// to return 0, as that is the value that lstat will assign the
+// gid and uid properties for fs.Stats objects
+if (isWindows) {
+  process.getuid = () => 0
+  process.getgid = () => 0
+}
 
 const output = []
 
