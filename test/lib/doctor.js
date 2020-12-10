@@ -579,9 +579,18 @@ test('npm doctor file permission checks', t => {
     return cb(err, result)
   }
 
-  fs.chmodSync(join(dir, 'cache', 'unreadable'), 64) // S_IXUSR
-  fs.chmodSync(join(dir, 'localBin', 'four'), 448) // S_IRWXU
-  fs.chmodSync(join(dir, 'globalBin', 'six'), 128) // S_IXUSR
+  const _fsAccess = fs.access
+  fs.access = (p, mask, cb) => {
+    const err = new Error('failed')
+    switch (p) {
+      case join(dir, 'cache', 'unreadable'):
+      case join(dir, 'localBin', 'four'):
+      case join(dir, 'globalBin', 'six'):
+        return cb(err)
+      default:
+        return cb(null)
+    }
+  }
 
   const doctor = requireInject('../../lib/doctor.js', {
     '../../lib/utils/is-windows.js': false,
@@ -616,6 +625,7 @@ test('npm doctor file permission checks', t => {
     console.error = _consoleError
     fs.lstat = _fsLstat
     fs.readdir = _fsReaddir
+    fs.access = _fsAccess
     clearLogs()
   })
 
