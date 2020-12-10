@@ -18,6 +18,7 @@ const nodeVersions = [
   { version: 'v14.0.0', lts: false },
   { version: 'v13.0.0', lts: false },
   { version: 'v12.0.0', lts: 'Erbium' },
+  { version: 'v10.13.0', lts: 'Dubnium' },
 ]
 
 const fetch = async () => {
@@ -123,7 +124,7 @@ const doctor = requireInject('../../lib/doctor.js', {
   which,
 })
 
-test('npm doctor', t => {
+test('npm doctor checks ok', t => {
   const dir = t.testdir()
   npm.cache = npm.flatOptions.cache = dir
   npm.localDir = dir
